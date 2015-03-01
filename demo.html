@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <title>olos-analyser Demo</title>
+
+  <script src="../webcomponentsjs/webcomponents.min.js"></script>
+  <script>
+    var audioContext = new AudioContext();
+    var analyser;
+    var osc;
+
+    window.addEventListener('polymer-ready', function(e) {
+      console.log('ready!');
+      analyser = document.querySelector('olos-analyser');
+      console.log(analyser);
+
+      osc = audioContext.createOscillator();
+      osc.start();
+      osc.connect(analyser.input);
+    });
+
+  </script>
+  <link rel="import" href="olos-analyser.html">
+  <style>
+  </style>
+</head>
+<body unresolved>
+  <olos-analyser></olos-analyser>
+</body>
+</html>

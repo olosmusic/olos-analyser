@@ -1,0 +1,12 @@
+{
+  "name": "olos-analyser",
+  "version": "0.0.0",
+  "license": "MIT",
+  "main": "olos-analyser.html",
+  "dependencies": {
+    "polymer": "Polymer/polymer#~0.5.1"
+  },
+  "devDependencies": {
+    "web-component-tester": "Polymer/web-component-tester#^1.1.4"
+  }
+}
