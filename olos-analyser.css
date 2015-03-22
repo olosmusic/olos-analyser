@@ -4,14 +4,20 @@
 }
 
 #container {
-  /*border: 2px solid;*/
-/*  border-radius: 25px;
+/*  border: 2px solid;
+  border-radius: 25px;
   box-shadow: 10px 10px 5px #888888;
   padding: 20px;
-*/  background: white;
+  background: white;
   opacity: 90%;
-  /*cursor: pointer;*/
-  position:fixed;
+  cursor: pointer;*/
+  /*position:fixed;*/
+}
+
+canvas {
+  width: 100%;
+  height: 100%;
+  position: relative;
 }
 
 /*paper-slider::shadow #sliderBar::shadow #activeProgress {

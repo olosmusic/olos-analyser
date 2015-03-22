@@ -9,8 +9,6 @@
     // handle i/o
     input: null,
     output: null,
-    inputCount: 1,
-    outputCount: 1,
 
     ready: function() {
       this._audioContext = audioContext;
@@ -55,6 +53,17 @@
         //   drawFreqBars(this.oscilloscope.analyser,freqCanvas.context);
       }
       requestAnimationFrame( this.animate.bind(this) );
+    },
+
+    dispose: function() {
+      if (this.inputConnections) {
+        for (var i = 0; i < this.inputConnections.length; i++) {
+          console.log(this.inputConnections[i]);
+          this.inputConnections[i].disconnect();
+        }
+      }
+      this.analyser.disconnect();
+      this.analyser = null;
     }
 
   });
