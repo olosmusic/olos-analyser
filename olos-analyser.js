@@ -47,15 +47,19 @@
 
     animate: function() {
       var self = this;
+      console.log('animating');
       if (this.oscilloscope) {
         this.oscilloscope.draw(this.scopeCanvas.myContext);
         // if (freqCanvas)
         //   drawFreqBars(this.oscilloscope.analyser,freqCanvas.context);
       }
-      requestAnimationFrame( this.animate.bind(this) );
+      this._animationFrame = window.requestAnimationFrame( this.animate.bind(this) );
     },
 
     dispose: function() {
+
+     window.cancelAnimationFrame( this._animationFrame );
+
       if (this.inputConnections) {
         for (var i = 0; i < this.inputConnections.length; i++) {
           console.log(this.inputConnections[i]);
