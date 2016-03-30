@@ -21,7 +21,10 @@ Oscilloscope.prototype.draw = function (context) {
   context.strokeStyle = "red";
   context.lineWidth = 1;
   context.fillStyle="#004737";
-  context.fillRect(0,0,this.width, this.height);
+  // context.fillStyle="rgba(250,250,250,0.02)";
+
+  // context.fillRect(0,0,this.width, this.height);
+  context.clearRect ( 0 , 0 , this.width, this.height );
   context.beginPath();
   context.moveTo(0,0);
   context.lineTo(this.width,0);
@@ -48,7 +51,9 @@ Oscilloscope.prototype.draw = function (context) {
   context.lineTo(this.width,quarterHeight*2);
   context.stroke();
 
-  context.strokeStyle = "white";
+  // context.strokeStyle = "white";
+  context.strokeStyle = "rgb(75,50,20)";
+  context.lineWidth = 2;
 
   context.beginPath();
 
@@ -97,4 +102,34 @@ function findFirstPositiveZeroCrossing(buf, buflen) {
     return 0;
 
   return last_zero;
+}
+
+
+function drawFreqBars(analyser,canvas){
+  var SPACING = 3;
+  var BAR_WIDTH = 1;
+  var context =  canvas.getContext( '2d' );
+  var canvasWidth = 300; //canvas.width;
+  var canvasHeight = 300; //canvas.height;
+  var numBars = Math.round(canvasWidth / SPACING);
+  var freqByteData = new Uint8Array(analyser.frequencyBinCount);
+
+  analyser.getByteFrequencyData(freqByteData); 
+
+  context.clearRect(0, 0, canvasWidth, canvasHeight);
+  context.lineCap = 'round';
+  var multiplier = analyser.frequencyBinCount / numBars;
+
+  // Draw rectangle for each frequency bin.
+  for (var i = 0; i < numBars; ++i) {
+    var magnitude = 0;
+    var offset = Math.floor( i * multiplier );
+    // gotta sum/average the block, or we miss narrow-bandwidth spikes
+    for (var j = 0; j< multiplier; j++)
+      magnitude += freqByteData[offset + j];
+    magnitude = magnitude / multiplier;
+    var magnitude2 = freqByteData[i * multiplier];
+    context.fillStyle = "hsl( " + Math.round((i*360)/numBars) + ", 100%, 50%)";
+    context.fillRect(i * SPACING, canvasHeight, BAR_WIDTH, -magnitude);
+  }
 }

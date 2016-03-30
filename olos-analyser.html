@@ -13,13 +13,108 @@ olos-analyser
 @status alpha
 @homepage 
 -->
-<polymer-element name="olos-analyser" attributes="input output width height color src showControls play rootfolder">
+<dom-module id="olos-analyser">
+  <link rel="import" type="css" href="olos-analyser.css">
   <template>
-    <link rel="stylesheet" href="olos-analyser.css"></link>
     <div id="container">
     </div>
   </template>
-  <script src="olos-analyser.js"type="text/javascript"></script>
-  <script src="oscilloscope.js"type="text/javascript"></script>
-
-</polymer-element>
+  <script type="text/javascript">
+    (function (params) {
+      Polymer({
+        is: 'olos-analyser',
+        properties: {
+          color: { notify: true },
+          displayType: {
+            type: String,
+            value: 'time'
+          },
+          height: {
+            type: Number,
+            value: 300,
+            notify: true
+          },
+          // handle i/o
+          input: {
+            value: null,
+            notify: true
+          },
+          output: {
+            value: null,
+            notify: true
+          },
+          play: { notify: true },
+          publicMethods: {
+            type: Array,
+            value: function () {
+              return ['set'];
+            }
+          },
+          rootfolder: {
+            type: String,
+            value: '../olos-analyser/',
+            notify: true
+          },
+          showControls: { notify: true },
+          src: { notify: true },
+          width: {
+            type: Number,
+            value: 300,
+            notify: true
+          }
+        },
+        ready: function () {
+          this._audioContext = audioContext;
+          this.initAnalyser();
+          this.input = this.output = this.analyser;
+          this.setupCanvas();
+        },
+        set: function () {
+          // change to 'freq'
+          this.displayType = 'time';
+        },
+        setupCanvas: function (container) {
+          var scopeCanvas = document.createElement('canvas');
+          scopeCanvas.width = this.width;
+          scopeCanvas.height = this.height;
+          scopeCanvas.id = 'scope';
+          scopeCanvas.myContext = scopeCanvas.getContext('2d');
+          Polymer.dom(this.$.container).appendChild(scopeCanvas);
+          this.scopeCanvas = scopeCanvas;
+          // TO DO: environment handles animation, only run when there is input
+          window.requestAnimationFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame;
+          this.animate();
+        },
+        initAnalyser: function () {
+          // TO DO: dispose analyser if one exists
+          this.analyser = audioContext.createAnalyser();
+          this.set('analyser.fftSize', 2048);
+          this.oscilloscope = new Oscilloscope(this.analyser, this.width, this.height);
+        },
+        animate: function () {
+          var self = this;
+          if (this.oscilloscope && this.displayType === 'time') {
+            this.oscilloscope.draw(this.scopeCanvas.myContext);
+          } else {
+            drawFreqBars(this.oscilloscope.analyser, this.scopeCanvas);
+          }
+          this._animationFrame = window.requestAnimationFrame(this.animate.bind(this));
+        },
+        dispose: function () {
+          window.cancelAnimationFrame(this._animationFrame);
+          // remove audio elements
+          var nodes = ['analyser'];
+          for (var i = 0; i < nodes.length; i++) {
+            try {
+              var node = self[nodes[i]];
+              node.disconnect();
+              node = null;
+            } catch (e) {
+            }
+          }
+        }
+      });
+    }());
+  </script>
+  <script src="oscilloscope.js" type="text/javascript"></script>
+</dom-module>
